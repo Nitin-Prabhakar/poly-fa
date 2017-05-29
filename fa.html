@@ -1,0 +1,67 @@
+<link rel="import" href="/wp-content/polymers/bower_components/polymer/polymer-element.html">
+<dom-module id="fa-fa">
+    <template>
+    </template>
+</dom-module>
+<script>
+    function interrupt(int) {
+        return new Promise(function() {
+            var channel = new MessageChannel();
+            channel.port2.onmessage = function(event) {
+                if (event.data.error)
+                    reject(event.data.error);
+                else
+                    resolve(event.data);
+            };
+            navigator.serviceWorker.controller.postMessage(int, [channel.port2]);
+        });
+    }
+
+    function registrar(sw) {
+        if ('serviceWorker' in navigator) {
+            var activeSWRunning = {
+                yes: 0
+            };
+            if (navigator.serviceWorker.controller !== null && navigator.serviceWorker.controller.state == 'activated') {
+                var activeSWRunning = {
+                    yes: 1,
+                    scriptURL: navigator.serviceWorker.controller.scriptURL
+                };
+            }
+            navigator.serviceWorker.register(sw)
+                .then(function(registration) {
+                    // Registration was successful
+                    interrupt(JSON.stringify(activeSWRunning));
+                }, function(err) {
+                    // registration failed :(
+                    console.log('faSrv_Wrkr registration failed: ', err);
+                });
+        }
+    }
+    class faFa extends Polymer.Element {
+
+        static get is() {
+            return 'fa-fa';
+        }
+
+        constructor() {
+            super();
+            registrar('/fa_sw.js');
+        }
+
+        // Element class can define custom element reactions
+        connectedCallback() {
+            super.connectedCallback();
+        }
+
+        ready() {
+            super.ready();
+        }
+
+    }
+
+    // Associate the new class with an element name
+    window.customElements.define(faFa.is, faFa);
+
+</script>
+pt>
