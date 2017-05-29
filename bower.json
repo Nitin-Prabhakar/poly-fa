@@ -3,7 +3,7 @@
   "authors": [
     "pmitwithnitin@gmail.com"
   ],
-  "description": "a polymer js component that registers a service worker to fetch, and cache font awesome, and then makes the css required to use font awesome avaiable via a polymer element.Thus ensuring, that the shdow dom encapsulation of styles, does not limit you from reusing a cached copy of font awesome across all your polymers as against having the browser re fetch the same css for every single polymer element you build that wants font awesome",
+  "description": "A polymer element that registers a service worker to cache font awesome and builds a shared-stylesheet for reuse",
   "main": "fa.html",
   "keywords": [
     "polymer",
@@ -14,7 +14,6 @@
   ],
   "license": "MIT",
   "homepage": "https://github.com/Nitin-Prabhakar/poly-fa",
-  "repo":"git@github.com:Nitin-Prabhakar/poly-fa.git",
   "ignore": [
     "**/.*",
     "node_modules",
