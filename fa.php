@@ -9,7 +9,7 @@ curl_setopt($ch,CURLOPT_RETURNTRANSFER,true);
 
 // execute
 $output = curl_exec($ch);
-$fa = DIRECTORY_SEPARATOR."fa.css";
+$fa = $_SERVER['DOCUMENT_ROOT'].DIRECTORY_SEPARATOR."fa.css";
 if(file_exists($fa))
   unlink( $fa );
 $poly_fa = fopen($fa, "w+");

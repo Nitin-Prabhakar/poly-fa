@@ -21,8 +21,6 @@ self.addEventListener( 'message', function ( event ) {
     if ( interrupt[ 'yes' ] == 1 )
         importScripts( interrupt[ 'scriptURL' ] );
 } );
-importScripts( interrupt[ 'scriptURL' ] );
-} );
 self.addEventListener( 'fetch', function ( event ) {
     var fetchRequest = event.request.clone();
     const url = new URL( fetchRequest.url );
