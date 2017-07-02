@@ -1,19 +1,6 @@
-var FA = 's-0-q-cache-FA';
+var FA = 'fa_v1-FA';
 self.addEventListener( 'install', function ( event ) {
     self.skipWaiting();
-    fetch( '/fa.php', {
-            method: 'post',
-            headers: {
-                "Content-type": "application/x-www-form-urlencoded; charset=UTF-8"
-            },
-            body: 'getFA=1'
-        } )
-        .then( function ( response ) {
-            caches.open( FA )
-                .then( function ( cache ) {
-                    return cache.addAll( [ '/fa.css' ] );
-                } )
-        } );
 } );
 self.addEventListener( 'activate', function ( event ) {} );
 self.addEventListener( 'message', function ( event ) {
@@ -22,33 +9,43 @@ self.addEventListener( 'message', function ( event ) {
         importScripts( interrupt[ 'scriptURL' ] );
 } );
 self.addEventListener( 'fetch', function ( event ) {
-    var fetchRequest = event.request.clone();
-    const url = new URL( fetchRequest.url );
-    if ( url.pathname == "/fa.css" ) {
-        event.respondWith(
-            caches.match( event.request )
-            .then( function ( response ) {
-                //cache hit
-                if ( response )
-                    return response;
-                //BEGIN not in cache
-
-                return (
-                        /*Do a fresh network request for the url requested*/
-                        fetch( fetchRequest )
-                    )
+    let fetchRequest = event.request.clone();
+    let url = new URL( fetchRequest.url );
+    if ( url.pathname == "/fa.php" ) {
+        event.respondWith( caches.open( FA )
+            .then( function ( fa_v1 ) {
+                return fa_v1.match( event.request )
                     .then( function ( response ) {
-                        //check if network request generated a 200 OK and / or is a same Origin Request - DO NOT CACHE if not
-                        if ( !response || response.status !== 200 || response.type !== 'basic' )
-                            return response;
-                        var responseToCache = response.clone();
-                        caches.open( Externals )
-                            .then( function ( cache ) {
-                                cache.put( fetchRequest, responseToCache );
+                        return response || fetch( event.request )
+                            .then( function ( nw_resp ) {
+                                let resp2cache = nw_resp.clone();
+                                fa_v1.put( event.request, resp2cache );
+                                return nw_resp;
+                            } )
+                    } )
+            } ) );
+    }
+    if ( url.origin == "https://use.fontawesome.com" ) {
+        event.respondWith(
+            caches.open( FA )
+            .then( function ( fa_v1 ) {
+                return fa_v1.match( event.request )
+                    .then( function ( response ) {
+                        let href = url.href;
+                        return response || fetch( '/fa.php', {
+                                method: 'POST',
+                                headers: {
+                                    "Content-type": "application/x-www-form-urlencoded; charset=UTF-8"
+                                },
+                                body: 'href=' + href
+                            } )
+                            .then( function ( fa_nr ) {
+                                let rH = new Headers( fa_nr.headers );
+                                let fa_r2C = fa_nr.clone();
+                                fa_v1.put( event.request, fa_r2C );
+                                return fa_nr;
                             } );
-                        return response;
                     } );
-                //END not in cache
             } )
         );
     }

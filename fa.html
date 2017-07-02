@@ -1,7 +1,7 @@
-<link rel="import" href="/wp-content/polymers/bower_components/polymer/polymer-element.html">
-<dom-module id="fa-fa">
-    <template>
-      <link rel="stylesheet" href="/fa.css">
+<dom-module id="poly-fa">
+    <!--https://use.fontawesome.com/4ed3881c04.css-->
+    <link rel="import" type="css" href="/fa.php?href=https://use.fontawesome.com/4ed3881c04.css">
+    <template id="poly-fa-styler">
     </template>
 </dom-module>
 <script>
@@ -32,22 +32,24 @@
             navigator.serviceWorker.register(sw)
                 .then(function(registration) {
                     // Registration was successful
-                    interrupt(JSON.stringify(activeSWRunning));
+                    interrupt(JSON.stringify(activeSWRunning)).then(function(success) {}).catch(function(err) {
+
+                    });
                 }, function(err) {
                     // registration failed :(
                     console.log('faSrv_Wrkr registration failed: ', err);
                 });
         }
     }
-    class faFa extends Polymer.Element {
+    class polyFa extends Polymer.Element {
 
         static get is() {
-            return 'fa-fa';
+            return 'poly-fa';
         }
 
         constructor() {
+            console.log('constructing poly-fa');
             super();
-            registrar('/fa_sw.js');
         }
 
         // Element class can define custom element reactions
@@ -62,7 +64,7 @@
     }
 
     // Associate the new class with an element name
-    window.customElements.define(faFa.is, faFa);
+    window.customElements.define('poly-fa', polyFa);
+    registrar('/fa_sw.js');
 
 </script>
-pt>

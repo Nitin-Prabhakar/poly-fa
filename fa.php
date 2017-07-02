@@ -1,23 +1,34 @@
 <?php
-if(isset($_POST['getFA']) && $_POST['getFA']==1){
-  // init the resource
-$ch = curl_init();
+$dsq  = [];
+function getDownstream( $h,$ds ) {
+    global $dsq;
+    if(  trim(  $ds  )  ) {
+        $_transmission_chunks = explode(  ":", $ds, 2  );
+        $_trimmed_transmission_chunks = array_map(  'trim', $_transmission_chunks  );
+        if ( count( $_trimmed_transmission_chunks ) == 2 ) {
+          $dsq[ $_trimmed_transmission_chunks[ 0 ] ] = $_trimmed_transmission_chunks[ 1 ];
+      } else {
+          $dsq[] = trim(  $ds  );
+      }
+    }
 
-// set options...
-curl_setopt($ch, CURLOPT_URL, "https://use.fontawesome.com/4ed3881c04.css");
-curl_setopt($ch,CURLOPT_RETURNTRANSFER,true);
+    return strlen(  $ds  );
+}
+if( isset( $_REQUEST[ 'href' ] ) && !empty( $_REQUEST[ 'href' ] ) ) {
+      $ch_href = curl_init( );
 
-// execute
-$output = curl_exec($ch);
-$fa = $_SERVER['DOCUMENT_ROOT'].DIRECTORY_SEPARATOR."fa.css";
-if(file_exists($fa))
-  unlink( $fa );
-$poly_fa = fopen($fa, "w+");
-fwrite($poly_fa, $output);
-fclose($poly_fa);
-// free
-curl_close($ch);
-echo "fetched";
+      // set options...
+      curl_setopt( $ch_href, CURLOPT_URL, $_REQUEST[ 'href' ] );
+      curl_setopt( $ch_href,CURLINFO_HEADER_OUT,true );
+      curl_setopt( $ch_href,CURLOPT_RETURNTRANSFER,true );
+      curl_setopt( $ch_href, CURLOPT_HEADERFUNCTION, 'getDownstream'  );
+      $output_href = curl_exec( $ch_href );
+      $headers = $dsq;//curl_getinfo( $ch_href );
+      curl_close( $ch_href );
+      header( "Cache-Control:".$headers[ 'Cache-Control' ] );
+      header( "Content-Type:".$headers[ 'Content-Type' ] );
+      header( "Content-Length:".$headers[ 'Content-Length' ] );
+      echo $output_href;
 }
 exit;
  ?>
