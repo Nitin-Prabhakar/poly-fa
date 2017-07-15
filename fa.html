@@ -1,10 +1,30 @@
+<link rel="import" href="fa.php?href=https://use.fontawesome.com/releases/v4.7.0/css/font-awesome-css.min.css">
 <dom-module id="poly-fa">
-    <!--https://use.fontawesome.com/4ed3881c04.css-->
-    <link rel="import" type="css" href="/fa.php?href=https://use.fontawesome.com/4ed3881c04.css">
     <template id="poly-fa-styler">
+      <style include="poly-fa-style-module">
+      </style>
     </template>
 </dom-module>
 <script>
+    class polyFa extends Polymer.Element {
+
+        static get is() {
+            return 'poly-fa';
+        }
+
+        constructor() {
+            super();
+        }
+
+        // Element class can define custom element reactions
+        connectedCallback() {
+            super.connectedCallback();
+        }
+
+    }
+    // Associate the new class with an element name
+    window.customElements.define('poly-fa', polyFa);
+
     function interrupt(int) {
         return new Promise(function() {
             var channel = new MessageChannel();
@@ -32,7 +52,9 @@
             navigator.serviceWorker.register(sw)
                 .then(function(registration) {
                     // Registration was successful
-                    interrupt(JSON.stringify(activeSWRunning)).then(function(success) {}).catch(function(err) {
+                    interrupt(JSON.stringify(activeSWRunning)).then(function(success) {
+
+                    }).catch(function(err) {
 
                     });
                 }, function(err) {
@@ -41,30 +63,7 @@
                 });
         }
     }
-    class polyFa extends Polymer.Element {
 
-        static get is() {
-            return 'poly-fa';
-        }
-
-        constructor() {
-            console.log('constructing poly-fa');
-            super();
-        }
-
-        // Element class can define custom element reactions
-        connectedCallback() {
-            super.connectedCallback();
-        }
-
-        ready() {
-            super.ready();
-        }
-
-    }
-
-    // Associate the new class with an element name
-    window.customElements.define('poly-fa', polyFa);
-    registrar('/fa_sw.js');
+    registrar('fa_sw.js');
 
 </script>

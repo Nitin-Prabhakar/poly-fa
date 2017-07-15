@@ -25,10 +25,10 @@ if( isset( $_REQUEST[ 'href' ] ) && !empty( $_REQUEST[ 'href' ] ) ) {
       $output_href = curl_exec( $ch_href );
       $headers = $dsq;//curl_getinfo( $ch_href );
       curl_close( $ch_href );
-      header( "Cache-Control:".$headers[ 'Cache-Control' ] );
-      header( "Content-Type:".$headers[ 'Content-Type' ] );
-      header( "Content-Length:".$headers[ 'Content-Length' ] );
-      echo $output_href;
+      header( "Content-Type: text/html" );
+      $prepend = '<dom-module id="poly-fa-style-module"><template><style>';
+      $append = '</style></template></dom-module>';
+      echo trim($prepend.$output_href.$append);
 }
 exit;
  ?>
