@@ -7,10 +7,13 @@ A Packaged Polymer element that encapsulates font awesome
 - mv fa_sw.js `<document-root>`
 ## Usage
 ```
+<link rel="import" href="<path-to-bower-components>/poly-fa/fa.html">
 <dom-module id="example-element">
     <template>
       <style include="poly-fa">
+          <!--scoped styles apart from fa-->
       </style>
+      <!-- your element's DOM -->
     </template>
 </dom-module>
 ```
