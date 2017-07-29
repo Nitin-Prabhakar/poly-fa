@@ -1,6 +1,6 @@
-<link rel="import" href="fa.php?href=https://use.fontawesome.com/releases/v4.7.0/css/font-awesome-css.min.css">
+<link rel="import" href="https://poly-style.appspot.com?id=poly-fa-style-module&url=https://use.fontawesome.com/releases/v4.7.0/css/font-awesome-css.min.css">
 <dom-module id="poly-fa">
-    <template id="poly-fa-styler">
+  <template id="poly-fa-styler">
       <style include="poly-fa-style-module">
           /*----- Genral Classes start ------*/
             .wrapper,.copyright {
@@ -107,64 +107,65 @@
     </template>
 </dom-module>
 <script>
-    class polyFa extends Polymer.Element {
+class polyFa extends Polymer.Element {
 
-        static get is() {
-            return 'poly-fa';
-        }
+  static get is() {
+    return 'poly-fa';
+  }
 
-        constructor() {
-            super();
-        }
+  constructor() {
+    super();
+  }
 
-        // Element class can define custom element reactions
-        connectedCallback() {
-            super.connectedCallback();
-        }
-
-    }
-    // Associate the new class with an element name
-    window.customElements.define('poly-fa', polyFa);
-
-    function interrupt(int) {
-        return new Promise(function() {
-            var channel = new MessageChannel();
-            channel.port2.onmessage = function(event) {
+  static get properties() {
+    return {
+      scope: {
+        type: String,
+        value: ""
+      },
+      _interrupt: {
+        type: Object,
+        value: function() {
+          return function(int) {
+            return new Promise(function() {
+              var channel = new MessageChannel();
+              channel.port2.onmessage = function(event) {
                 if (event.data.error)
-                    reject(event.data.error);
+                  reject(event.data.error);
                 else
-                    resolve(event.data);
-            };
-            navigator.serviceWorker.controller.postMessage(int, [channel.port2]);
-        });
-    }
-
-    function registrar(sw) {
-        if ('serviceWorker' in navigator) {
-            var activeSWRunning = {
-                yes: 0
-            };
-            if (navigator.serviceWorker.controller !== null && navigator.serviceWorker.controller.state == 'activated') {
-                var activeSWRunning = {
-                    yes: 1,
-                    scriptURL: navigator.serviceWorker.controller.scriptURL
-                };
-            }
-            navigator.serviceWorker.register(sw)
-                .then(function(registration) {
-                    // Registration was successful
-                    interrupt(JSON.stringify(activeSWRunning)).then(function(success) {
-
-                    }).catch(function(err) {
-
-                    });
-                }, function(err) {
-                    // registration failed :(
-                    console.log('faSrv_Wrkr registration failed: ', err);
-                });
+                  resolve(event.data);
+              };
+              navigator.serviceWorker.controller.postMessage(int, [channel.port2]);
+            });
+          }
         }
-    }
-
-    registrar('/fa_sw.js');
-
+      },
+      __registrar: {
+        type: Object,
+        value: function() {
+          return function(sw) {
+            let fa_sw = 'fa_sw.js';
+            var noOp = navigator.serviceWorker && (navigator.serviceWorker.controller !== null) && (navigator.serviceWorker.controller.state == 'activated');
+            var registrar = noOp ? null : function() {
+              navigator.serviceWorker.register(sw + fa_sw).then(function(success) {
+                console.log('font awesome service worker registered from ', success.scope);
+              }, function(errrrrr) {
+                console.log(errrrrr);
+              });
+            }();
+          }
+        }
+      }
+    };
+  }
+  // Element class can define custom element reactions
+  connectedCallback() {
+    super.connectedCallback();
+    this.scope = this.scope.replace('\\', '/');
+    this.scope = this.scope.match('.*\/$') ? this.scope : this.scope + '/';
+    this.__registrar(this.scope);
+  }
+}
+// Associate the new class with an element name
+window.customElements.define(polyFa.is, polyFa);
 </script>
