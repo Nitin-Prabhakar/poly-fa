@@ -1,6 +1,6 @@
 <link rel="import" href="https://poly-style.appspot.com?id=poly-fa-style-module&url=https://use.fontawesome.com/releases/v4.7.0/css/font-awesome-css.min.css">
 <dom-module id="poly-fa">
-  <template id="poly-fa-styler">
+  <template id="poly-fa-styler" strip-whitespace>
       <style include="poly-fa-style-module">
           /*----- Genral Classes start ------*/
             .wrapper,.copyright {
@@ -104,6 +104,7 @@
             .social-icons .fa-youtube,.social-icons .fa-youtube-play,.social-icons .fa-youtube-square{background-color:#C52F30;}
 
       </style>
+      <slot></slot>
     </template>
 </dom-module>
 <script>

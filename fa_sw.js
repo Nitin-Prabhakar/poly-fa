@@ -1,5 +1,4 @@
 var FA = 'fa_v1-FA';
-
 self.addEventListener( 'install', function ( event ) {
 	self.skipWaiting();
 } );
@@ -10,61 +9,49 @@ self.addEventListener( 'activate', function ( event ) {
 		} ) )
 } );
 self.addEventListener( 'message', function ( event ) {
-	let interrupt = JSON.parse( event.data );
+	var interrupt = JSON.parse( event.data );
+	if ( interrupt[ 'yes' ] == 1 )
+		importScripts( interrupt[ 'scriptURL' ] );
 } );
-
-function cFnL( event ) {
-	let cache = this;
-	return cache.match( event.request )
-		.then( function ( response ) {
-			return response || fetch( event.request )
-				.then( function ( nw_resp ) {
-
-					var noCache = false;
-					if ( nw_resp.status == 200 && nw_resp.type == 'basic' ) {
-						let resp2cache = nw_resp.clone();
-						let headers = new Headers( nw_resp.headers );
-						if ( headers.has( 'Cache-Control' ) ) {
-							let _cc = headers.get( 'Cache-Control' )
-								.toLowerCase();
-							var _noStore = ( _cc.indexOf( 'no-store', 0 ) === -1 ) ? false : true;
-							var _noCache = ( _cc.indexOf( 'no-cache', 0 ) === -1 ) ? false : true;
-							var _revalidate = ( _cc.indexOf( 'must-revalidate', 0 ) === -1 ) ? false : true;
-							var _conditional_cache = _noCache && _revalidate;
-							noCache = _conditional_cache || _noStore;
-						}
-						if ( noCache !== true ) {
-							cache.put( event.request, resp2cache )
-								.catch( function ( err ) {
-									console.log( err );
-								} );
-						}
-					}
-					return nw_resp;
-				} )
-		} )
-}
 self.addEventListener( 'fetch', function ( event ) {
-	let url = new URL( event.request.url );
-	if ( event.request.url.endsWith( 'fa.html' ) ) {
+	let fetchRequest = event.request.clone();
+	let url = new URL( fetchRequest.url );
+	if ( url.pathname == "/fa.php" ) {
 		event.respondWith( caches.open( FA )
-			.then( cache => {
-				return cFnL.call( cache, event );
-			} ) )
-	}
-	if ( url.origin.match( '.*(poly-style.appspot.com)$' ) ) {
-		event.respondWith( caches.open( FA )
-			.then( function ( cache ) {
-				return cache.match( event.request )
-					.then( response => {
+			.then( function ( fa_v1 ) {
+				return fa_v1.match( event.request )
+					.then( function ( response ) {
 						return response || fetch( event.request )
-							.then( cor_resp => {
-								if ( cor_resp.status == 200 ) {
-									cache.put( event.request, cor_resp.clone() );
-								}
-								return cor_resp;
+							.then( function ( nw_resp ) {
+								let resp2cache = nw_resp.clone();
+								fa_v1.put( event.request, resp2cache );
+								return nw_resp;
 							} )
 					} )
-			} ) )
+			} ) );
+	}
+	if ( url.origin == "https://use.fontawesome.com" ) {
+		event.respondWith(
+			caches.open( FA )
+			.then( function ( fa_v1 ) {
+				return fa_v1.match( event.request )
+					.then( function ( response ) {
+						let href = url.href;
+						return response || fetch( '/fa.php', {
+								method: 'POST',
+								headers: {
+									"Content-type": "application/x-www-form-urlencoded; charset=UTF-8"
+								},
+								body: 'href=' + href
+							} )
+							.then( function ( fa_nr ) {
+								let rH = new Headers( fa_nr.headers );
+								let fa_r2C = fa_nr.clone();
+								fa_v1.put( event.request, fa_r2C );
+								return fa_nr;
+							} );
+					} );
+			} )
+		);
 	}
 } );
