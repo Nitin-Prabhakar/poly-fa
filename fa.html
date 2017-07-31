@@ -124,6 +124,10 @@ class polyFa extends Polymer.Element {
         type: String,
         value: ""
       },
+      registerSw: {
+        type: Boolean,
+        value: false
+      },
       _interrupt: {
         type: Object,
         value: function() {
@@ -145,6 +149,7 @@ class polyFa extends Polymer.Element {
         type: Object,
         value: function() {
           return function(sw) {
+            if (!this.registerSw) return;
             let fa_sw = 'fa_sw.js';
             var noOp = navigator.serviceWorker && (navigator.serviceWorker.controller !== null) && (navigator.serviceWorker.controller.state == 'activated');
             var registrar = noOp ? null : function() {
