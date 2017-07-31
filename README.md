@@ -3,8 +3,6 @@
 A Packaged Polymer element that encapsulates font awesome
 # Install
 - bower install poly-fa
-- mv fa.php `<document-root>`
-- mv fa_sw.js `<document-root>`
 ## Usage
 ```
 <link rel="import" href="<path-to-bower-components>/poly-fa/fa.html">
@@ -19,10 +17,34 @@ A Packaged Polymer element that encapsulates font awesome
 ```
 ### What It Does
 - Fetches Font Awesome from the most recent distribution branch and packages it as a style module for use in polymer custom elements
-- Registers a Service Worker *fa_sw.js* on the first run
-- Hijacks requests to font awesome, and caches it in the service worker cache
-- Localizes font awesome imports to your domain / origin - *No Cross Origin Requests*
-#### Pre requisites
-- Your Domain should have PHP >= 5.0
+- Uses the [Polymer Web Tool] [1] to package your external styles
+### Extra Gains
+**Service Worker**
+- Can Register a Service Worker *fa_sw.js* on the first run
+- Hijacks requests to [Polymer Web Tool] [1], and caches it in the service worker cache
+[1]:https://poly-style.appspot.com/demo/
+### Note:
+To have the service worker, change your usage like so:
+- browse to bower_components/poly-fa
+- `cp fa_sw.js /fa_sw.js`
+## Usage With Service worker
+```
+<link rel="import" href="<path-to-bower-components>/poly-fa/fa.html">
+<dom-module id="example-element">
+    <template>
+      <style include="poly-fa">
+          <!--scoped styles apart from fa-->
+      </style>
+      <poly-fa register-sw>
+      <!-- your element's DOM -->
+      </poly-fa>
+    </template>
+</dom-module>
+```
+
 #### Optional Requisites
 - For Service worker to work, you should serve via SSL/TLS
+
+#### Existing service worker
+If you already have an existing service worker,
+- Use importScripts(`<path-to-bower-components>/poly-fa/fa_sw_vanilla.js`) before your service worker handles fetches
