@@ -17,12 +17,12 @@ A Packaged Polymer element that encapsulates font awesome
 ```
 ### What It Does
 - Fetches Font Awesome from the most recent distribution branch and packages it as a style module for use in polymer custom elements
-- Uses the [Polymer Web Tool] [1] to package your external styles
+- Uses the [Polymer Web Tool][1] to package your external styles
 ### Extra Gains
 **Service Worker**
 - Can Register a Service Worker *fa_sw.js* on the first run
-- Hijacks requests to [Polymer Web Tool] [1], and caches it in the service worker cache
-[1]:https://poly-style.appspot.com/demo/
+- Hijacks requests to [Polymer Web Tool][1], and caches it in the service worker cache
+
 ### Note:
 To have the service worker, change your usage like so:
 - browse to bower_components/poly-fa
@@ -48,3 +48,5 @@ To have the service worker, change your usage like so:
 #### Existing service worker
 If you already have an existing service worker,
 - Use importScripts(`<path-to-bower-components>/poly-fa/fa_sw_vanilla.js`) before your service worker handles fetches
+
+[1]: https://poly-style.appspot.com/demo/
